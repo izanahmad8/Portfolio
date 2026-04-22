@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { contactFormsparkId as formId } from "../profileconfig";
+import { contactFormEmail as formId } from "../profileconfig";
 const ContactMeForm = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -17,7 +17,11 @@ const ContactMeForm = () => {
 
   return (
     <div id="contact" className="w-full max-w-xl m-8">
-      <form action={`https://submit-form.com/${formId}`} className="space-y-4">
+      <form
+        action={`https://formsubmit.co/${formId}`}
+        method="POST"
+        className="space-y-4"
+      >
         <div className="form-group">
           <label htmlFor="name" className="block text-lg">
             Name:

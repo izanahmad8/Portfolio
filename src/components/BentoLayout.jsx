@@ -7,7 +7,7 @@ import mailLogo from "../assets/mail.png";
 import resumeImage from "../assets/resume.svg";
 import backgroundImage from "../assets/profile.png";
 import setupImage from "../assets/setup.jpg";
-import fresherLogo from "../assets/experience/Fresher.svg";
+import expLogo from "../assets/experience/+1.svg";
 import contactme from "../assets/contact.jpg";
 import { email, github, linkedin, twitter, resume } from "../profileconfig";
 import ProjectModal from "./modals/ProjectModal.jsx";
@@ -109,7 +109,7 @@ const BentoLayout = ({ isDarkMode, toggleDarkMode }) => {
         {/* Experience */}
         <div className="col-span-1 aspect-square rounded-xl border-transparent shadow-md overflow-hidden">
           <img
-            src={fresherLogo}
+            src={expLogo}
             alt="Experience"
             className="w-full h-full object-cover"
           />
