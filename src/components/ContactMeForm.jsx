@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { contactFormEmail as formId } from "../profileconfig";
+import { contactFormId as formId } from "../profileconfig";
 const ContactMeForm = () => {
   const [formData, setFormData] = useState({
     name: "",

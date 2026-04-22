@@ -18,4 +18,4 @@ export const skills = [
 ];
 
 export const resume = "./Resume.pdf";
-export const contactFormEmail = "izan.khan596@gmail.com";
+export const contactFormId = "0410878dae7751371c28f18b7c631e12";
