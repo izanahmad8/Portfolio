@@ -16,7 +16,8 @@ const ContactMeForm = () => {
   };
 
   return (
-    <div id="contact" className="w-full max-w-xl m-8">
+    // no horizontal margin: w-full + m-8 overflowed the modal on narrow screens
+    <div id="contact" className="w-full max-w-xl my-4">
       <form
         action={`https://formsubmit.co/${formId}`}
         method="POST"

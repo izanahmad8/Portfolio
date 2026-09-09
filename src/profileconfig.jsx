@@ -5,16 +5,21 @@ export const github = "https://github.com/izanahmad8";
 export const linkedin = "https://linkedin.com/in/izanahmad";
 export const twitter = "https://x.com/izanahmad10";
 
+// Cycled through by the hero typewriter — keep this a punchy subset.
+// The full categorised list lives in the resume.
 export const skills = [
-  "Data Structure and Algorithms",
-  "Problem Solver",
+  "Java",
+  "Spring Boot",
+  "JavaScript (ES6+)",
   "React.js",
-  "React-Native",
+  "Next.js",
+  "React Native",
   "Node.js",
   "Express.js",
+  "PostgreSQL",
   "MongoDB",
-  "SQL",
-  "C++",
+  "REST APIs",
+  "Data Structures and Algorithms",
 ];
 
 export const resume = "./Resume.pdf";

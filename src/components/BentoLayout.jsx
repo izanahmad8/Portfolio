@@ -5,63 +5,95 @@ import linkedInLogo from "../assets/linkedin.svg";
 import xLogo from "../assets/x-logo.svg";
 import mailLogo from "../assets/mail.png";
 import resumeImage from "../assets/resume.svg";
-import backgroundImage from "../assets/profile.png";
-import setupImage from "../assets/setup.jpg";
+import backgroundImage from "../assets/profile-photo.jpg";
+import projectsImage from "../assets/projects.jpg";
 import expLogo from "../assets/experience/+1.svg";
 import contactme from "../assets/contact.jpg";
 import { email, github, linkedin, twitter, resume } from "../profileconfig";
 import ProjectModal from "./modals/ProjectModal.jsx";
 import ContactModal from "./modals/ContactModal.jsx";
+import ExperienceModal from "./modals/ExperienceModal.jsx";
 
 const BentoLayout = ({ isDarkMode, toggleDarkMode }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const gridRef = useRef(null);
   const [animationDone, setAnimationDone] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
+  const [experienceOpen, setExperienceOpen] = useState(false);
 
   useEffect(() => {
-    const elements = gridRef.current.children;
-    gsap.set(elements, {
-      opacity: 0,
-      y: () => -Math.random() * 500 - 100,
-      x: () => 50 - Math.random() * 100,
-    });
-    gsap.to(elements, {
-      opacity: 1,
-      y: 0,
-      x: 0,
-      stagger: 0.1,
-      ease: "elastic.out(1, 0.75)",
-      duration: 1.2,
-      delay: 0.5,
-      onComplete: () => setAnimationDone(true),
-    });
+    const grid = gridRef.current;
+    if (!grid) return;
+    const elements = grid.children;
+
+    // Land on the finished state without animating. GSAP drives tweens off
+    // requestAnimationFrame, which is throttled in a hidden tab and never runs
+    // during prerender — so starting at opacity 0 there would hide the grid
+    // permanently. Same end state for anyone who asked for less motion.
+    const settle = () => {
+      gsap.set(elements, { opacity: 1, x: 0, y: 0 });
+      setAnimationDone(true);
+    };
+
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (prefersReducedMotion || document.visibilityState !== "visible") {
+      settle();
+      return;
+    }
+
+    const ctx = gsap.context(() => {
+      gsap.set(elements, {
+        opacity: 0,
+        y: () => -Math.random() * 500 - 100,
+        x: () => 50 - Math.random() * 100,
+      });
+      gsap.to(elements, {
+        opacity: 1,
+        y: 0,
+        x: 0,
+        stagger: 0.1,
+        ease: "elastic.out(1, 0.75)",
+        duration: 1.2,
+        delay: 0.5,
+        onComplete: () => setAnimationDone(true),
+      });
+    }, grid);
+
+    return () => ctx.revert();
   }, []);
 
   useEffect(() => {
-    if (animationDone) {
-      const elements = gridRef.current.children;
-      for (let element of elements) {
-        element.addEventListener("mouseenter", () => {
-          gsap.to(element, {
-            scale: 1.1,
-            duration: 0.2,
-            ease: "Power1.easeOut",
-            overwrite: "auto",
-            zIndex: 10,
-          });
+    if (!animationDone) return;
+    const grid = gridRef.current;
+    if (!grid) return;
+
+    // Touch browsers fire mouseenter on tap and never fire mouseleave, which
+    // would leave a tile stuck at scale 1.1.
+    if (!window.matchMedia("(hover: hover)").matches) return;
+
+    const teardown = [...grid.children].map((element) => {
+      const scaleTo = (scale, zIndex) => () =>
+        gsap.to(element, {
+          scale,
+          zIndex,
+          duration: 0.2,
+          ease: "Power1.easeOut",
+          overwrite: "auto",
         });
-        element.addEventListener("mouseleave", () => {
-          gsap.to(element, {
-            scale: 1,
-            duration: 0.2,
-            ease: "Power1.easeOut",
-            overwrite: "auto",
-            zIndex: 1,
-          });
-        });
-      }
-    }
+      const onEnter = scaleTo(1.1, 10);
+      const onLeave = scaleTo(1, 1);
+      element.addEventListener("mouseenter", onEnter);
+      element.addEventListener("mouseleave", onLeave);
+      return () => {
+        element.removeEventListener("mouseenter", onEnter);
+        element.removeEventListener("mouseleave", onLeave);
+      };
+    });
+
+    return () => teardown.forEach((off) => off());
   }, [animationDone]);
 
   return (
@@ -79,18 +111,23 @@ const BentoLayout = ({ isDarkMode, toggleDarkMode }) => {
 
       <div
         ref={gridRef}
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+        className="grid grid-cols-2 lg:grid-cols-4 gap-4"
       >
         {/* Profile Image */}
         <div
-          className="col-span-1 sm:col-span-2 lg:col-span-2 aspect-square sm:aspect-[2/1] rounded-xl border-transparent p-4 shadow-md flex justify-center items-center"
+          className="relative overflow-hidden col-span-2 aspect-square sm:aspect-[2/1] rounded-xl border-transparent p-4 shadow-md flex justify-center items-center"
           style={{
             backgroundImage: `url(${backgroundImage})`,
             backgroundSize: "cover",
-            backgroundPosition: "center",
+            backgroundPosition: "center 22%",
           }}
         >
-          <span className="text-xl lg:text-4xl text-black dark:text-white font-bold">
+          {/* keeps the label readable, and weighted left so it clears the face */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-tr from-black/80 via-black/25 to-transparent"
+          />
+          <span className="relative w-full self-end text-left text-xl lg:text-3xl text-white font-bold drop-shadow-lg">
             Who Am I?
           </span>
         </div>
@@ -108,25 +145,39 @@ const BentoLayout = ({ isDarkMode, toggleDarkMode }) => {
 
         {/* Experience */}
         <div className="col-span-1 aspect-square rounded-xl border-transparent shadow-md overflow-hidden">
-          <img
-            src={expLogo}
-            alt="Experience"
-            className="w-full h-full object-cover"
-          />
+          <button
+            className="w-full h-full"
+            onClick={() => setExperienceOpen(true)}
+            aria-label="View work experience"
+          >
+            <img
+              src={expLogo}
+              alt="Experience"
+              className="w-full h-full object-cover"
+            />
+          </button>
         </div>
 
-        {/* My Setup */}
-        <div className="col-span-1 sm:col-span-2 lg:col-span-4 aspect-square sm:aspect-[4/1] rounded-xl border-transparent shadow-md overflow-hidden">
+        {/* Projects */}
+        <div className="col-span-2 lg:col-span-4 aspect-[2/1] sm:aspect-[4/1] rounded-xl border-transparent shadow-md overflow-hidden">
           <button
             className="relative w-full h-full"
             onClick={() => setIsModalOpen(true)}
+            aria-label="View projects"
           >
             <img
-              src={setupImage}
-              alt="Setup"
+              src={projectsImage}
+              alt="Screenshots of VYARA and Borcelle Kitchen"
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 flex items-center justify-center text-3xl text-white font-bold z-10"></div>
+            {/* label lives in the DOM so it survives every aspect-ratio crop */}
+            <div
+              aria-hidden="true"
+              className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/30 to-transparent"
+            />
+            <span className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 text-white font-bold drop-shadow-lg text-xl sm:text-2xl lg:text-3xl">
+              Projects
+            </span>
           </button>
         </div>
 
@@ -176,7 +227,7 @@ const BentoLayout = ({ isDarkMode, toggleDarkMode }) => {
 
         {/* Contact me */}
         <div
-          className="col-span-1 sm:col-span-2 lg:col-span-4 rounded-xl border-transparent shadow-md overflow-hidden cursor-pointer"
+          className="col-span-2 lg:col-span-4 rounded-xl border-transparent shadow-md overflow-hidden cursor-pointer"
           onClick={() => setContactOpen(true)}
         >
           <img src={contactme} />
@@ -186,6 +237,14 @@ const BentoLayout = ({ isDarkMode, toggleDarkMode }) => {
       {/* Project Modal */}
       {isModalOpen && (
         <ProjectModal onClose={() => setIsModalOpen(false)} mode={isDarkMode} />
+      )}
+
+      {/* Experience Modal */}
+      {experienceOpen && (
+        <ExperienceModal
+          onClose={() => setExperienceOpen(false)}
+          mode={isDarkMode}
+        />
       )}
 
       {/*Contact form*/}

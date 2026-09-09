@@ -1,10 +1,10 @@
 const Education = ({ isDarkMode }) => {
   const educationDetails = [
     {
-      institution: "Tula's Institute, Dehradun, Uttarakhand",
+      institution: "Uttarakhand Technical University, Dehradun",
       duration: "2021-2025",
       degree: "Bachelor of Technology - Computer Science and Engineering",
-      cgpa: "CGPA: 8.5",
+      cgpa: "CGPA: 8.32/10",
     },
     {
       institution: "MS College, Siwan, Bihar",

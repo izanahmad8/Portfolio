@@ -1,8 +1,8 @@
-import { project } from "../constants/project";
+import { experience } from "../constants/experience";
 import cross from "../../assets/cross.svg";
-import Project from "./Project";
+import Experience from "./Experience";
 
-const ProjectModal = (props) => {
+const ExperienceModal = (props) => {
   const isDarkMode = props?.mode;
 
   return (
@@ -27,10 +27,10 @@ const ProjectModal = (props) => {
               : "border-gray-300 text-blue-600"
           }`}
         >
-          Project Details
+          Experience
         </div>
         <div className="p-1 sm:p-5 space-y-4">
-          {project.map((proj, index) => (
+          {experience.map((exp, index) => (
             <div
               key={index}
               className={`${
@@ -39,7 +39,7 @@ const ProjectModal = (props) => {
                   : "bg-white hover:bg-blue-100 border-gray-200"
               } transition-all duration-200 ease-in-out p-3 sm:p-4 border rounded-lg shadow-sm`}
             >
-              <Project proj={proj} index={index} isDarkMode={isDarkMode} />
+              <Experience exp={exp} index={index} isDarkMode={isDarkMode} />
             </div>
           ))}
         </div>
@@ -60,4 +60,4 @@ const ProjectModal = (props) => {
   );
 };
 
-export default ProjectModal;
+export default ExperienceModal;
