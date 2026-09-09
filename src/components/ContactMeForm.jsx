@@ -16,8 +16,9 @@ const ContactMeForm = () => {
   };
 
   return (
-    // no horizontal margin: w-full + m-8 overflowed the modal on narrow screens
-    <div id="contact" className="w-full max-w-xl my-4">
+    // mx-auto centres it once max-w-xl kicks in; no fixed horizontal margin,
+    // since w-full + m-8 overflowed the modal on narrow screens
+    <div id="contact" className="w-full max-w-xl mx-auto my-4">
       <form
         action={`https://formsubmit.co/${formId}`}
         method="POST"

@@ -16,6 +16,7 @@
       content="MTSXWTli2O4pO5NKlN9xWBzCOZPII5GnIXR6mdlNE40"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="index, follow" />
     <meta
       name="description"
       content="Portfolio of Izan Ahmad, Software Developer. Building production web applications and REST APIs with React.js, Next.js, Node.js, Express.js and Spring Boot."
@@ -55,6 +56,53 @@
       name="twitter:image"
       content="https://izan-portfolio.vercel.app/og-image.png"
     />
+
+    <!-- Structured data: tells search engines who this page is about. Static,
+         so it is read without executing any JavaScript. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Izan Ahmad",
+        "url": "https://izan-portfolio.vercel.app/",
+        "image": "https://izan-portfolio.vercel.app/og-image.png",
+        "jobTitle": "Software Developer",
+        "description": "Software Developer building production web applications and REST APIs with React.js, Next.js, Node.js, Express.js and Spring Boot.",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Bangalore",
+          "addressRegion": "Karnataka",
+          "addressCountry": "IN"
+        },
+        "worksFor": {
+          "@type": "Organization",
+          "name": "TopGrep Tech Pvt. Ltd."
+        },
+        "alumniOf": {
+          "@type": "CollegeOrUniversity",
+          "name": "Uttarakhand Technical University"
+        },
+        "knowsAbout": [
+          "Java",
+          "Spring Boot",
+          "JavaScript",
+          "React.js",
+          "Next.js",
+          "React Native",
+          "Node.js",
+          "Express.js",
+          "PostgreSQL",
+          "MySQL",
+          "MongoDB",
+          "REST APIs"
+        ],
+        "sameAs": [
+          "https://github.com/izanahmad8",
+          "https://linkedin.com/in/izanahmad",
+          "https://x.com/izanahmad10"
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
