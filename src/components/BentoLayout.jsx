@@ -234,25 +234,30 @@ const BentoLayout = ({ isDarkMode, toggleDarkMode }) => {
         </div>
       </div>
 
-      {/* Project Modal */}
-      {isModalOpen && (
+      {/*
+        Modals stay mounted rather than being conditionally rendered, so their
+        content is present in the rendered DOM for search engines — this is the
+        same pattern as tabbed/accordion content, which Google indexes normally.
+        The `hidden` attribute keeps them out of view, out of the tab order and
+        out of the accessibility tree. Note it must sit on an element with no
+        display utility, or Tailwind's `.flex` would override `[hidden]`.
+      */}
+      <div hidden={!isModalOpen}>
         <ProjectModal onClose={() => setIsModalOpen(false)} mode={isDarkMode} />
-      )}
+      </div>
 
-      {/* Experience Modal */}
-      {experienceOpen && (
+      <div hidden={!experienceOpen}>
         <ExperienceModal
           onClose={() => setExperienceOpen(false)}
           mode={isDarkMode}
         />
-      )}
+      </div>
 
-      {/*Contact form*/}
-      {contactOpen && (
+      <div hidden={!contactOpen}>
         <div className="flex flex-col md:flex-row gap-10">
           <ContactModal setContactOpen={setContactOpen} mode={isDarkMode} />
         </div>
-      )}
+      </div>
     </div>
   );
 };

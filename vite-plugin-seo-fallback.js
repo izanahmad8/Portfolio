@@ -6,16 +6,16 @@ import { transform } from "esbuild";
 
 /**
  * Injects a static, crawlable version of the site's content into the built
- * index.html, inside #root.
+ * index.html, inside a <noscript> block.
  *
  * The app is client-rendered, so the shipped HTML is just an empty <div>.
  * Crawlers that don't execute JavaScript see nothing, and even those that do
  * see almost nothing, because the experience/project/education content only
  * mounts once a modal is opened. This bakes the same content into the HTML.
  *
- * React's createRoot() clears the container on mount, so visitors get the real
- * app and never interact with this markup. It is generated from the same data
- * modules the components render, so it cannot drift out of sync.
+ * It ships inside <noscript>, so browsers never paint it and visitors see no
+ * flash before React mounts. It is generated from the same data modules the
+ * components render, so it cannot drift out of sync.
  */
 
 const SOURCES = {
@@ -86,8 +86,8 @@ function renderSchool(edu) {
 </article>`;
 }
 
-// Visitors normally never see this — React swaps it out on mount. But on a slow
-// connection, or if the bundle fails outright, it is the page. Keep it legible.
+// Only ever rendered when scripting is unavailable, in which case it is the
+// whole page — so keep it legible.
 const FALLBACK_STYLE = `#seo-fallback{max-width:46rem;margin:0 auto;padding:2rem 1.25rem;
 font-family:system-ui,-apple-system,'Segoe UI',sans-serif;line-height:1.5;color:#111827}
 #seo-fallback h1{font-size:1.6rem;margin:0 0 .5rem}
@@ -154,7 +154,10 @@ export default function seoFallback({ root = process.cwd() } = {}) {
           'seo-fallback: could not find <div id="root"></div> in index.html'
         );
       }
-      return html.replace(target, `<div id="root">${markup}</div>`);
+      // <noscript> rather than inside #root: the markup stays in the served
+      // HTML for agents that don't run scripts, but browsers never parse or
+      // paint it, so there is no flash of fallback content before React mounts.
+      return html.replace(target, `${target}\n<noscript>${markup}</noscript>`);
     },
   };
 }
